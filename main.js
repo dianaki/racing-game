@@ -1,7 +1,16 @@
+const MAX_ENEMY = 7;
+
 const score = document.querySelector('.score');
 const start = document.querySelector('.start');
 const gameArea = document.querySelector('.gameArea');
 const car = document.createElement('div');
+
+const audio = document.createElement('audio');
+
+audio.type = 'audio/mp3';
+audio.src = 'music.mp3';
+audio.volume = 0.1;
+
 
 car.classList.add('car');
 
@@ -32,23 +41,26 @@ function startGame() {
   for (let i = 0; i < getQuantityElements(100); i++) {
     const line = document.createElement('div');
     line.classList.add('line');
-    line.style.top = (i * 100) + 'px';
+    line.style.top = `${i * 100}px`;
     line.y = i * 100;
     gameArea.appendChild(line);
   }
 
   for(let i = 0; i < getQuantityElements(100 * setting.traffic); i++) {
     const enemy = document.createElement('div');
+    const randomEnemy = Math.floor(Math.random() * MAX_ENEMY) + 1;
+    console.log(randomEnemy);
     enemy.classList.add('enemy');
     enemy.y = -100 * setting.traffic * (i + 1);
     enemy.style.left = Math.floor(Math.random() * (gameArea.offsetWidth - 50)) + 'px';
     enemy.style.top = enemy.y + 'px';
-    enemy.style.background = 'transparent url("./image/enemy1.png") center / cover no-repeat';
-    gameArea.appendChild(enemy);
+    enemy.style.background = `transparent url(./image/enemy${randomEnemy}.png) center / cover no-repeat`;
+    gameArea.append(enemy);
   }
 
   setting.start = true;
-  gameArea.appendChild(car);
+  gameArea.append(car);
+  audio.play();
   setting.x = car.offsetLeft;
   setting.y = car.offsetTop;
   requestAnimationFrame(playGame);
@@ -82,13 +94,17 @@ function playGame() {
 }
 
 function startRun(event) {
-  event.preventDefault();
-  keys[event.key] = true;
+  if (keys.hasOwnProperty(event.key)) {
+    event.preventDefault();
+    keys[event.key] = true;
+  }
 }
 
 function stopRun(event) {
-  event.preventDefault();
-  keys[event.key] = false;
+  if (keys.hasOwnProperty(event.key)) {
+    event.preventDefault();
+    keys[event.key] = false;
+  }
 }
 
 function moveRoad() {
